@@ -1,0 +1,842 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排序算法演示</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .control-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.dark-mode .control-panel {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-panel label {
+            margin: 5px;
+            font-weight: 500;
+        }
+
+        .control-panel button,
+        .control-panel select,
+        .control-panel input {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .control-panel button {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .control-panel button:hover {
+            background-color: #45a049;
+        }
+
+        .control-panel select,
+        .control-panel input[type="number"] {
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+        }
+
+        body.dark-mode .control-panel select,
+        body.dark-mode .control-panel input[type="number"] {
+            background-color: #333;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .control-panel input[type="range"] {
+            width: 150px;
+        }
+
+        #bar-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #fff;
+            display: flex;
+            align-items: flex-end;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.dark-mode #bar-container {
+            background-color: #1e1e1e;
+            border-color: #555;
+        }
+
+        .bar {
+            background-color: #4caf50;
+            margin-right: 2px;
+            flex-grow: 1;
+            transition: height 0.2s ease, background-color 0.2s ease;
+        }
+
+        #complexity,
+        #real-time-complexity {
+            margin-top: 10px;
+            font-size: 14px;
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode #complexity,
+        body.dark-mode #real-time-complexity {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+
+        #history-panel {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.dark-mode #history-panel {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #history-panel h3 {
+            margin-top: 0;
+        }
+
+        #history-panel p {
+            margin: 5px 0;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #dark-mode-toggle:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="control-panel">
+            <label>选择排序算法:
+                <select id="algorithm-select">
+                    <option value="bubbleSort">冒泡排序</option>
+                    <option value="selectionSort">选择排序</option>
+                    <option value="insertionSort">插入排序</option>
+                    <option value="quickSort">快速排序</option>
+                    <option value="mergeSort">归并排序</option>
+                    <option value="heapSort">堆排序</option>
+                    <option value="shellSort">希尔排序</option>
+                    <option value="countingSort">计数排序</option>
+                    <option value="radixSort">基数排序</option>
+                    <option value="bucketSort">桶排序</option>
+                    <option value="timSort">TimSort</option>
+                    <option value="bogoSort">猴子排序</option>
+                    <option value="gnomeSort">地精排序</option>
+                    <option value="combSort">梳排序</option>
+                    <option value="cycleSort">循环排序</option>
+                </select>
+            </label>
+            <label>数组大小:
+                <input type="number" id="array-size" min="1" value="50">
+            </label>
+            <button id="generate-array">生成数组</button>
+            <button id="start-sorting">开始演示</button>
+            <button id="pause-sorting" disabled>暂停</button>
+            <button id="reset-sorting">重置</button>
+            <button id="next-step" disabled></button>
+            <label>动画速度:
+                <input type="range" id="speed-slider" min="100" max="500" value="200" step="10">
+                <input type="number" id="speed-input" min="100" max="500" value="200" step="10">
+            </label>
+            <div id="complexity"></div>
+            <div id="real-time-complexity"></div>
+        </div>
+        <div id="bar-container"></div>
+        <div id="history-panel">
+            <h3>算法简介</h3>
+            <p id="history-text"></p>
+        </div>
+    </div>
+    <button id="dark-mode-toggle">暗黑模式</button>
+
+    <script>
+        const barContainer = document.getElementById('bar-container');
+        const algorithmSelect = document.getElementById('algorithm-select');
+        const generateArrayButton = document.getElementById('generate-array');
+        const startSortingButton = document.getElementById('start-sorting');
+        const pauseSortingButton = document.getElementById('pause-sorting');
+        const resetSortingButton = document.getElementById('reset-sorting');
+        const nextStepButton = document.getElementById('next-step');
+        const speedSlider = document.getElementById('speed-slider');
+        const speedInput = document.getElementById('speed-input');
+        const arraySizeInput = document.getElementById('array-size');
+        const complexityDisplay = document.getElementById('complexity');
+        const realTimeComplexityDisplay = document.getElementById('real-time-complexity');
+        const historyText = document.getElementById('history-text');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        let array = [];
+        let bars = [];
+        let animationId;
+        let isPaused = false;
+        let generator;
+        let startTime;
+        let operationsCount = 0;
+        let spaceUsage = 0;
+
+        // 暗黑模式切换
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // 同步滑块和输入框
+        speedSlider.addEventListener('input', () => {
+            speedInput.value = speedSlider.value;
+        });
+
+        speedInput.addEventListener('input', () => {
+            speedSlider.value = speedInput.value;
+        });
+
+        // 生成随机数组并初始化条形图
+        function generateArray(size = 50) {
+            const inputSize = parseInt(arraySizeInput.value);
+            let arraySize = isNaN(inputSize) || inputSize < 1 ? size : inputSize;
+            const maxArraySize = Math.floor((barContainer.clientWidth - 2) / 5);
+            arraySize = Math.min(arraySize, maxArraySize);
+            array = [];
+            bars = [];
+            barContainer.innerHTML = '';
+            const barWidth = Math.max(5, (barContainer.clientWidth - 2 * arraySize) / arraySize);
+            for (let i = 0; i < arraySize; i++) {
+                const value = Math.floor(Math.random() * 400) + 50;
+                array.push(value);
+                const bar = document.createElement('div');
+                bar.style.height = `${value}px`;
+                bar.style.width = `${barWidth}px`;
+                bar.style.marginRight = '2px';
+                bar.classList.add('bar');
+                barContainer.appendChild(bar);
+                bars.push(bar);
+            }
+        }
+
+        // 更新条形图
+        function updateBars(array, highlightedIndices = []) {
+            bars.forEach((bar, index) => {
+                bar.style.height = `${array[index]}px`;
+                if (highlightedIndices.includes(index)) {
+                    bar.style.backgroundColor = '#f4c430'; // 黄色
+                } else {
+                    bar.style.backgroundColor = '#4caf50'; // 绿色
+                }
+            });
+        }
+
+        // 设置算法复杂度信息
+        function setComplexity(algorithm) {
+            const complexities = {
+                bubbleSort: '时间复杂度: O(n²), 空间复杂度: O(1)',
+                selectionSort: '时间复杂度: O(n²), 空间复杂度: O(1)',
+                insertionSort: '时间复杂度: O(n²), 空间复杂度: O(1)',
+                quickSort: '时间复杂度: O(n log n), 空间复杂度: O(log n)',
+                mergeSort: '时间复杂度: O(n log n), 空间复杂度: O(n)',
+                heapSort: '时间复杂度: O(n log n), 空间复杂度: O(1)',
+                shellSort: '时间复杂度: O(n log n), 空间复杂度: O(1)',
+                countingSort: '时间复杂度: O(n + k), 空间复杂度: O(k)',
+                radixSort: '时间复杂度: O(nk), 空间复杂度: O(n + k)',
+                bucketSort: '时间复杂度: O(n + k), 空间复杂度: O(n + k)',
+                timSort: '时间复杂度: O(n log n), 空间复杂度: O(n)',
+                bogoSort: '时间复杂度: O((n+1)!), 空间复杂度: O(1)',
+                gnomeSort: '时间复杂度: O(n²), 空间复杂度: O(1)',
+                combSort: '时间复杂度: O(n²), 空间复杂度: O(1)',
+                cycleSort: '时间复杂度: O(n²), 空间复杂度: O(1)'
+            };
+            complexityDisplay.textContent = complexities[algorithm];
+        }
+
+        // 更新实时复杂度信息
+        function updateRealTimeComplexity() {
+            const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+            realTimeComplexityDisplay.textContent = `实时统计 - 操作次数: ${operationsCount}, 空间使用: ${spaceUsage} 单位, 耗时: ${elapsedTime} 秒`;
+        }
+
+        // 排序动画控制
+        function sortAnimation() {
+            if (isPaused) return;
+
+            const result = generator.next();
+            if (!result.done) {
+                operationsCount++;
+                spaceUsage = Math.max(spaceUsage, result.value.space || 0);
+                updateBars(result.value.array, result.value.highlight);
+                updateRealTimeComplexity();
+                const delay = Math.max(50, 500 - parseInt(speedSlider.value) + 100);
+                animationId = setTimeout(sortAnimation, delay);
+            } else {
+                startSortingButton.disabled = false;
+                generateArrayButton.disabled = false;
+                algorithmSelect.disabled = false;
+                pauseSortingButton.disabled = true;
+                nextStepButton.disabled = false;
+                isPaused = false;
+            }
+        }
+
+        // 下一步按钮功能
+        nextStepButton.addEventListener('click', () => {
+            if (isPaused || !generator) return;
+
+            const result = generator.next();
+            if (!result.done) {
+                operationsCount++;
+                spaceUsage = Math.max(spaceUsage, result.value.space || 0);
+                updateBars(result.value.array, result.value.highlight);
+                updateRealTimeComplexity();
+            } else {
+                nextStepButton.disabled = false;
+            }
+        });
+
+        // 排序算法历史信息
+        const algorithmHistory = {
+            bubbleSort: "冒泡排序是最简单的排序算法之一，最早于1956年提出。它通过重复地遍历数组并交换相邻元素来排序。",
+            selectionSort: "选择排序是一种简单直观的排序算法，最早于1956年提出。它每次从未排序部分选择最小元素放到已排序部分的末尾。",
+            insertionSort: "插入排序是一种简单的排序算法，最早于1956年提出。它通过将未排序部分的元素逐个插入到已排序部分的适当位置来排序。",
+            quickSort: "快速排序由Tony Hoare于1959年发明，是一种高效的排序算法，采用分治法策略。",
+            mergeSort: "归并排序由John von Neumann于1945年发明，是一种稳定的排序算法，采用分治法策略。",
+            heapSort: "堆排序由J. W. J. Williams于1964年发明，是一种基于二叉堆的排序算法。",
+            shellSort: "希尔排序由Donald Shell于1959年发明，是插入排序的改进版本，通过逐步减少间隔来排序。",
+            countingSort: "计数排序由Harold H. Seward于1954年发明，适用于整数排序，通过统计元素出现次数来排序。",
+            radixSort: "基数排序最早用于卡片排序机，通过按位排序来实现整体排序。",
+            bucketSort: "桶排序是一种分布式排序算法，适用于均匀分布的数据。",
+            timSort: "TimSort由Tim Peters于2002年发明，是Python的内置排序算法，结合了归并排序和插入排序的优点。",
+            bogoSort: "猴子排序是一种极其低效的排序算法，通过随机打乱数组直到有序。",
+            gnomeSort: "地精排序由Hamid Sarbazi-Azad于2000年提出，是一种简单的排序算法，类似于插入排序。",
+            combSort: "梳排序由Włodzimierz Dobosiewicz于1980年发明，是冒泡排序的改进版本，通过逐步减少间隔来排序。",
+            cycleSort: "循环排序是一种不稳定的排序算法，通过循环地将元素放到正确的位置来排序。"
+        };
+
+        // 设置算法历史信息
+        algorithmSelect.addEventListener('change', () => {
+            const algorithm = algorithmSelect.value;
+            historyText.textContent = algorithmHistory[algorithm];
+        });
+
+        // 事件监听器
+        generateArrayButton.addEventListener('click', () => {
+            generateArray();
+        });
+
+        startSortingButton.addEventListener('click', () => {
+            const algorithm = algorithmSelect.value;
+            setComplexity(algorithm);
+            operationsCount = 0;
+            spaceUsage = 0;
+            startTime = Date.now();
+            switch (algorithm) {
+                case 'bubbleSort':
+                case 'selectionSort':
+                case 'insertionSort':
+                case 'heapSort':
+                case 'shellSort':
+                case 'countingSort':
+                case 'radixSort':
+                case 'bucketSort':
+                case 'timSort':
+                case 'bogoSort':
+                case 'gnomeSort':
+                case 'combSort':
+                case 'cycleSort':
+                    generator = window[algorithm](array.slice());
+                    break;
+                case 'quickSort':
+                case 'mergeSort':
+                    generator = window[algorithm](array.slice(), 0, array.length - 1);
+                    break;
+                default:
+                    console.error('未知的排序算法');
+                    return;
+            }
+            startSortingButton.disabled = true;
+            generateArrayButton.disabled = true;
+            algorithmSelect.disabled = true;
+            pauseSortingButton.disabled = false;
+            nextStepButton.disabled = false;
+            isPaused = false;
+            sortAnimation();
+        });
+
+        pauseSortingButton.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseSortingButton.textContent = isPaused ? '继续' : '暂停';
+            if (!isPaused) {
+                sortAnimation();
+            }
+        });
+
+        resetSortingButton.addEventListener('click', () => {
+            if (animationId) {
+                clearTimeout(animationId);
+            }
+            generateArray();
+            startSortingButton.disabled = false;
+            generateArrayButton.disabled = false;
+            algorithmSelect.disabled = false;
+            pauseSortingButton.disabled = true;
+            nextStepButton.disabled = false;
+            isPaused = false;
+            pauseSortingButton.textContent = '暂停';
+            operationsCount = 0;
+            spaceUsage = 0;
+            realTimeComplexityDisplay.textContent = '';
+        });
+
+        // 排序算法实现
+        function* bubbleSort(array) {
+            for (let i = 0; i < array.length; i++) {
+                for (let j = 0; j < array.length - i - 1; j++) {
+                    if (array[j] > array[j + 1]) {
+                        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                        yield { array: [...array], highlight: [j, j + 1], space: array.length };
+                    }
+                }
+            }
+        }
+
+        function* selectionSort(array) {
+            for (let i = 0; i < array.length; i++) {
+                let minIndex = i;
+                for (let j = i + 1; j < array.length; j++) {
+                    if (array[j] < array[minIndex]) {
+                        minIndex = j;
+                    }
+                }
+                if (minIndex !== i) {
+                    [array[i], array[minIndex]] = [array[minIndex], array[i]];
+                    yield { array: [...array], highlight: [i, minIndex], space: array.length };
+                }
+            }
+        }
+
+        function* insertionSort(array) {
+            for (let i = 1; i < array.length; i++) {
+                let key = array[i];
+                let j = i - 1;
+                while (j >= 0 && array[j] > key) {
+                    array[j + 1] = array[j];
+                    j--;
+                    yield { array: [...array], highlight: [j + 1], space: array.length };
+                }
+                array[j + 1] = key;
+                yield { array: [...array], highlight: [j + 1], space: array.length };
+            }
+        }
+
+        function* quickSort(array, low = 0, high = array.length - 1) {
+            if (low < high) {
+                const pi = yield* partition(array, low, high);
+                yield* quickSort(array, low, pi - 1);
+                yield* quickSort(array, pi + 1, high);
+            }
+        }
+
+        function* partition(array, low, high) {
+            const pivot = array[high];
+            let i = low - 1;
+            for (let j = low; j < high; j++) {
+                if (array[j] < pivot) {
+                    i++;
+                    [array[i], array[j]] = [array[j], array[i]];
+                    yield { array: [...array], highlight: [i, j], space: array.length };
+                }
+            }
+            [array[i + 1], array[high]] = [array[high], array[i + 1]];
+            yield { array: [...array], highlight: [i + 1, high], space: array.length };
+            return i + 1;
+        }
+
+        function* mergeSort(array, low = 0, high = array.length - 1) {
+            if (low < high) {
+                const mid = Math.floor((low + high) / 2);
+                yield* mergeSort(array, low, mid);
+                yield* mergeSort(array, mid + 1, high);
+                yield* merge(array, low, mid, high);
+            }
+        }
+
+        function* merge(array, low, mid, high) {
+            const left = array.slice(low, mid + 1);
+            const right = array.slice(mid + 1, high + 1);
+            let i = 0, j = 0, k = low;
+            while (i < left.length && j < right.length) {
+                if (left[i] <= right[j]) {
+                    array[k] = left[i];
+                    i++;
+                } else {
+                    array[k] = right[j];
+                    j++;
+                }
+                k++;
+                yield { array: [...array], highlight: [k - 1], space: array.length + left.length + right.length };
+            }
+            while (i < left.length) {
+                array[k] = left[i];
+                i++;
+                k++;
+                yield { array: [...array], highlight: [k - 1], space: array.length + left.length + right.length };
+            }
+            while (j < right.length) {
+                array[k] = right[j];
+                j++;
+                k++;
+                yield { array: [...array], highlight: [k - 1], space: array.length + left.length + right.length };
+            }
+        }
+
+        function* heapSort(array) {
+            for (let i = Math.floor(array.length / 2) - 1; i >= 0; i--) {
+                yield* heapify(array, array.length, i);
+            }
+            for (let i = array.length - 1; i > 0; i--) {
+                [array[0], array[i]] = [array[i], array[0]];
+                yield { array: [...array], highlight: [0, i], space: array.length };
+                yield* heapify(array, i, 0);
+            }
+        }
+
+        function* heapify(array, n, i) {
+            let largest = i;
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+            if (left < n && array[left] > array[largest]) {
+                largest = left;
+            }
+            if (right < n && array[right] > array[largest]) {
+                largest = right;
+            }
+            if (largest !== i) {
+                [array[i], array[largest]] = [array[largest], array[i]];
+                yield { array: [...array], highlight: [i, largest], space: array.length };
+                yield* heapify(array, n, largest);
+            }
+        }
+
+        function* shellSort(array) {
+            let n = array.length;
+            for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+                for (let i = gap; i < n; i++) {
+                    let temp = array[i];
+                    let j;
+                    for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
+                        array[j] = array[j - gap];
+                        yield { array: [...array], highlight: [j, j - gap], space: array.length };
+                    }
+                    array[j] = temp;
+                    yield { array: [...array], highlight: [j], space: array.length };
+                }
+            }
+        }
+
+        function* countingSort(array) {
+            let max = Math.max(...array);
+            let min = Math.min(...array);
+            let range = max - min + 1;
+            let count = new Array(range).fill(0);
+            let output = new Array(array.length).fill(0);
+
+            for (let i = 0; i < array.length; i++) {
+                count[array[i] - min]++;
+            }
+
+            for (let i = 1; i < count.length; i++) {
+                count[i] += count[i - 1];
+            }
+
+            for (let i = array.length - 1; i >= 0; i--) {
+                output[count[array[i] - min] - 1] = array[i];
+                count[array[i] - min]--;
+                yield { array: [...output], highlight: [i], space: range + array.length };
+            }
+
+            for (let i = 0; i < array.length; i++) {
+                array[i] = output[i];
+                yield { array: [...array], highlight: [i], space: range + array.length };
+            }
+        }
+
+        function* radixSort(array) {
+            const maxNum = Math.max(...array);
+            let maxDigits = String(maxNum).length;
+
+            for (let i = 0; i < maxDigits; i++) {
+                let buckets = Array.from({ length: 10 }, () => []);
+                for (let j = 0; j < array.length; j++) {
+                    let digit = getDigit(array[j], i);
+                    buckets[digit].push(array[j]);
+                }
+                array = [].concat(...buckets);
+                yield { array: [...array], highlight: [], space: array.length + 10 };
+            }
+
+            function getDigit(num, place) {
+                return Math.floor(Math.abs(num) / Math.pow(10, place)) % 10;
+            }
+        }
+
+        function* bucketSort(array, bucketSize = 5) {
+            if (array.length === 0) return array;
+
+            let minValue = Math.min(...array);
+            let maxValue = Math.max(...array);
+
+            let bucketCount = Math.floor((maxValue - minValue) / bucketSize) + 1;
+            let buckets = new Array(bucketCount).fill().map(() => []);
+
+            for (let i = 0; i < array.length; i++) {
+                let bucketIndex = Math.floor((array[i] - minValue) / bucketSize);
+                buckets[bucketIndex].push(array[i]);
+                yield { array: [...array], highlight: [i], space: array.length + bucketCount };
+            }
+
+            array.length = 0;
+            for (let i = 0; i < buckets.length; i++) {
+                if (buckets[i].length > 0) {
+                    buckets[i].sort((a, b) => a - b);
+                    for (let j = 0; j < buckets[i].length; j++) {
+                        array.push(buckets[i][j]);
+                        yield { array: [...array], highlight: [array.length - 1], space: array.length + bucketCount };
+                    }
+                }
+            }
+        }
+
+        function* timSort(array) {
+            const MIN_MERGE = 32;
+
+            function* insertionSort(arr, left, right) {
+                for (let i = left + 1; i <= right; i++) {
+                    let key = arr[i];
+                    let j = i - 1;
+                    while (j >= left && arr[j] > key) {
+                        arr[j + 1] = arr[j];
+                        j--;
+                        yield { array: [...arr], highlight: [j + 1], space: arr.length };
+                    }
+                    arr[j + 1] = key;
+                    yield { array: [...arr], highlight: [j + 1], space: arr.length };
+                }
+            }
+
+            function* merge(arr, l, m, r) {
+                let len1 = m - l + 1, len2 = r - m;
+                let left = arr.slice(l, m + 1);
+                let right = arr.slice(m + 1, r + 1);
+                let i = 0, j = 0, k = l;
+
+                while (i < left.length && j < right.length) {
+                    if (left[i] <= right[j]) {
+                        arr[k] = left[i];
+                        i++;
+                    } else {
+                        arr[k] = right[j];
+                        j++;
+                    }
+                    k++;
+                    yield { array: [...arr], highlight: [k - 1], space: arr.length + left.length + right.length };
+                }
+
+                while (i < left.length) {
+                    arr[k] = left[i];
+                    i++;
+                    k++;
+                    yield { array: [...arr], highlight: [k - 1], space: arr.length + left.length + right.length };
+                }
+
+                while (j < right.length) {
+                    arr[k] = right[j];
+                    j++;
+                    k++;
+                    yield { array: [...arr], highlight: [k - 1], space: arr.length + left.length + right.length };
+                }
+            }
+
+            let n = array.length;
+            for (let i = 0; i < n; i += MIN_MERGE) {
+                yield* insertionSort(array, i, Math.min(i + MIN_MERGE - 1, n - 1));
+            }
+
+            for (let size = MIN_MERGE; size < n; size = 2 * size) {
+                for (let left = 0; left < n; left += 2 * size) {
+                    let mid = left + size - 1;
+                    let right = Math.min(left + 2 * size - 1, n - 1);
+                    if (mid < right) {
+                        yield* merge(array, left, mid, right);
+                    }
+                }
+            }
+        }
+
+        function* bogoSort(array) {
+            function isSorted(arr) {
+                for (let i = 1; i < arr.length; i++) {
+                    if (arr[i - 1] > arr[i]) return false;
+                }
+                return true;
+            }
+
+            function shuffle(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+            }
+
+            while (!isSorted(array)) {
+                shuffle(array);
+                yield { array: [...array], highlight: [], space: array.length };
+            }
+        }
+
+        function* gnomeSort(array) {
+            let index = 0;
+            while (index < array.length) {
+                if (index === 0 || array[index] >= array[index - 1]) {
+                    index++;
+                } else {
+                    [array[index], array[index - 1]] = [array[index - 1], array[index]];
+                    index--;
+                    yield { array: [...array], highlight: [index, index + 1], space: array.length };
+                }
+            }
+        }
+
+        function* combSort(array) {
+            let gap = array.length;
+            let shrink = 1.3;
+            let sorted = false;
+
+            while (!sorted) {
+                gap = Math.floor(gap / shrink);
+                if (gap <= 1) {
+                    gap = 1;
+                    sorted = true;
+                }
+
+                for (let i = 0; i + gap < array.length; i++) {
+                    if (array[i] > array[i + gap]) {
+                        [array[i], array[i + gap]] = [array[i + gap], array[i]];
+                        sorted = false;
+                        yield { array: [...array], highlight: [i, i + gap], space: array.length };
+                    }
+                }
+            }
+        }
+
+        function* cycleSort(array) {
+            for (let cycleStart = 0; cycleStart < array.length - 1; cycleStart++) {
+                let item = array[cycleStart];
+                let pos = cycleStart;
+
+                for (let i = cycleStart + 1; i < array.length; i++) {
+                    if (array[i] < item) {
+                        pos++;
+                    }
+                }
+
+                if (pos === cycleStart) continue;
+
+                while (item === array[pos]) {
+                    pos++;
+                }
+
+                [array[pos], item] = [item, array[pos]];
+                yield { array: [...array], highlight: [pos], space: array.length };
+
+                while (pos !== cycleStart) {
+                    pos = cycleStart;
+                    for (let i = cycleStart + 1; i < array.length; i++) {
+                        if (array[i] < item) {
+                            pos++;
+                        }
+                    }
+
+                    while (item === array[pos]) {
+                        pos++;
+                    }
+
+                    [array[pos], item] = [item, array[pos]];
+                    yield { array: [...array], highlight: [pos], space: array.length };
+                }
+            }
+        }
+
+        // 初始化
+        generateArray();
+        algorithmSelect.dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
